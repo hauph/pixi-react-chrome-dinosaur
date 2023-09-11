@@ -8,9 +8,9 @@ export const Ground = () => {
 	const [baseNumber, setBaseNumber] = useState(10);
 	const [start, setStart] = useState(true);
 
-	useTick((delta) => {
-		setXBackground(xBackground - baseNumber);
-	}, start);
+	// useTick((delta) => {
+	// 	setXBackground(xBackground - baseNumber);
+	// }, start);
 
 	return (
 		<Container position={[0, 300]}>

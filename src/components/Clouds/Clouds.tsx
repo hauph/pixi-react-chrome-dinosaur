@@ -53,9 +53,9 @@ export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 		setClouds(newClouds);
 	}, []);
 
-	useTick((delta) => {
-		setXContainer(xContainer - 3);
-	}, start);
+	// useTick((delta) => {
+	// 	setXContainer(xContainer - 3);
+	// }, start);
 
 	useEffect(() => {
 		if (memory.length === 0) return;
