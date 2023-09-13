@@ -9,10 +9,10 @@ interface CloudProps {
 	y: number;
 }
 
-export const Cloud: FC<CloudProps> = ({ x, y }) => {
-	const baseTexture = new BaseTexture(SpriteImage);
-	const cropRect = new Rectangle(162, 0, CLOUD_WIDTH, 100);
-	const croppedTexture = new Texture(baseTexture, cropRect);
+const baseTexture = new BaseTexture(SpriteImage);
+const cropRect = new Rectangle(162, 0, CLOUD_WIDTH, 100);
+const croppedTexture = new Texture(baseTexture, cropRect);
 
+export const Cloud: FC<CloudProps> = ({ x, y }) => {
 	return <Sprite texture={croppedTexture} x={x} y={y} />;
 };

@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, useTick } from '@pixi/react';
-import { Cloud } from './components/Cloud';
-import { random } from '@/global/utils';
+import { Cloud } from './components';
+import { random, getGameSpeedFromSessionStorage } from '@/global/utils';
 import { TWO_THIRD_VIEW_PORT_WIDTH, CLOUD_WIDTH, TOTAL_CLOUDS } from '@/global/constants';
+import { ComponentBuilderProps } from '@/global/interfaces';
 
-interface CloudsProps {
-	xPos: number;
-	update: () => void;
-}
+type CloudsProps = Omit<ComponentBuilderProps, 'key'>;
 
 function randomXY(max: number) {
 	return random(max);
@@ -31,9 +29,20 @@ function createXY(array: number[], max: number) {
 
 export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 	const [xContainer, setXContainer] = useState(xPos);
-	const [start, setStart] = useState(true);
 	const [clouds, setClouds] = useState<JSX.Element[]>([]);
 	const [memory, setMemory] = useState<number[]>([]);
+	const [gSpeed, setGSpeed] = useState(0);
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			const gameSpeed = getGameSpeedFromSessionStorage();
+			setGSpeed(gameSpeed);
+		}, 100);
+
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, []);
 
 	useEffect(() => {
 		const memoArrayX: number[] = [];
@@ -53,15 +62,15 @@ export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 		setClouds(newClouds);
 	}, []);
 
-	// useTick((delta) => {
-	// 	setXContainer(xContainer - 3);
-	// }, start);
+	useTick(() => {
+		setXContainer(xContainer - gSpeed);
+	}, gSpeed > 0);
 
 	useEffect(() => {
 		if (memory.length === 0) return;
 
 		// @ts-ignore
-		const containerIsInViewport = xContainer + memory.at(-1) + 95 > 0;
+		const containerIsInViewport = xContainer + memory.at(-1) + CLOUD_WIDTH > 0;
 
 		if (!containerIsInViewport) {
 			update();

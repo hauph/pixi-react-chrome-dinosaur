@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { TilingSprite, Container, useTick } from '@pixi/react';
 import SpriteImage from '@/assets/sprite.png';
 import { VIEW_PORT_WIDTH } from '@/global/constants';
 
-export const Ground = () => {
-	const [xBackground, setXBackground] = useState(-1);
-	const [baseNumber, setBaseNumber] = useState(10);
-	const [start, setStart] = useState(true);
+interface GroundProps {
+	gameSpeed: number;
+}
 
-	// useTick((delta) => {
-	// 	setXBackground(xBackground - baseNumber);
-	// }, start);
+export const Ground: FC<GroundProps> = ({ gameSpeed }) => {
+	const [xBackground, setXBackground] = useState(-1);
+
+	useTick(() => {
+		setXBackground(xBackground - (gameSpeed + 7));
+	}, gameSpeed > 0);
 
 	return (
 		<Container position={[0, 300]}>

@@ -5,15 +5,16 @@ import SpriteImage from '@/assets/sprite.png';
 
 interface DefaultDinoProps {
 	visible: boolean;
+	yPos: number;
 }
 
-export const DefaultDino: FC<DefaultDinoProps> = ({ visible }) => {
+export const DefaultDino: FC<DefaultDinoProps> = ({ visible, yPos }) => {
 	const baseTexture = new BaseTexture(SpriteImage);
 	const cropRect = new Rectangle(1335, 0, 88, 94);
 	const croppedTexture = new Texture(baseTexture, cropRect);
 
 	return (
-		<Container visible={visible} position={[0, 220]}>
+		<Container visible={visible} position={[50, yPos]}>
 			<Sprite texture={croppedTexture} />
 		</Container>
 	);
