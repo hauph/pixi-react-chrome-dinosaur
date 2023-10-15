@@ -30,7 +30,8 @@ export const Wrapper: FC<WrapperProps> = ({ componentBuilder, total, width }) =>
 			const newElements = elements;
 			const element = componentBuilder({
 				key: uuidv1(),
-				xPos: width * 2,
+				// @ts-ignore
+				xPos: width + elements.at(-1).props.xPos / 2,
 				update: () => setUpdate(true),
 			});
 			newElements.push(element);

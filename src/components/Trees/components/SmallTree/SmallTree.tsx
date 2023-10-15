@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import { Sprite } from '@pixi/react';
 import { Texture, Rectangle, BaseTexture } from 'pixi.js';
 import SpriteImage from '@/assets/sprite.png';
-import { TREE_TYPE } from '@/global/enums';
+import { TREE_TYPE, SMALL_TREE_WIDTH } from '@/global/enums';
 
 interface SmallTreeProps {
 	x: number;
@@ -16,23 +16,23 @@ export const SmallTree: FC<SmallTreeProps> = ({ x, y, treeType }) => {
 	const cropRect = useMemo(() => {
 		let rectX = 440;
 		let rectY = 0;
-		let rectW = 37;
+		let rectW = SMALL_TREE_WIDTH.WIDTH_37;
 		let rectH = 100;
 
 		if (treeType === TREE_TYPE.TYPE_1) {
 			rectX = 511;
 			rectY = 0;
-			rectW = 35;
+			rectW = SMALL_TREE_WIDTH.WIDTH_35;
 			rectH = 100;
 		} else if (treeType === TREE_TYPE.TYPE_2) {
 			rectX = 580;
 			rectY = 0;
-			rectW = 35;
+			rectW = SMALL_TREE_WIDTH.WIDTH_35;
 			rectH = 100;
 		} else if (treeType === TREE_TYPE.TYPE_3) {
 			rectX = 613;
 			rectY = 0;
-			rectW = 37;
+			rectW = SMALL_TREE_WIDTH.WIDTH_37;
 			rectH = 100;
 		}
 

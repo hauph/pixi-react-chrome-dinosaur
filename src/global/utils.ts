@@ -2,6 +2,22 @@ export function random(max: number, min = 0) {
     return Math.random() * (max - min) + min;
 }
 
+export function createXY(array: number[], min: number, max: number, width: number) {
+    let value = random(max, min);
+
+    if (array.length === 2) {
+        const [first, second] = array;
+        if (first > second) {
+            value = first + width;
+        } else {
+            value = second + width;
+        }
+    }
+
+    array.push(value);
+    return value;
+}
+
 export function setGameSpeedToSessionStorage(speed: number) {
     sessionStorage.setItem('gameSpeed', speed.toString());
 }

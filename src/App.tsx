@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Stage } from '@pixi/react';
 import { Ground, Clouds, Wrapper, Dino, Trees } from '@/components';
-import { VIEW_PORT_WIDTH, TWO_THIRD_VIEW_PORT_WIDTH } from '@/global/constants';
+import { VIEW_PORT_WIDTH, HALF_VIEW_PORT_WIDTH } from '@/global/constants';
 import { ComponentBuilderProps } from '@/global/interfaces';
 import {
 	setGameSpeedToSessionStorage,
@@ -14,6 +14,10 @@ function App() {
 
 	const cloudsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
 		return <Clouds key={key} xPos={xPos} update={update} />;
+	};
+
+	const treesBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
+		return <Trees key={key} xPos={xPos} update={update} />;
 	};
 
 	useEffect(() => {
@@ -47,9 +51,9 @@ function App() {
 
 	return (
 		<Stage width={VIEW_PORT_WIDTH} height={400} options={{ antialias: true, background: '#ffffff' }}>
-			{/* <Wrapper componentBuilder={cloudsBuilder} total={3} width={TWO_THIRD_VIEW_PORT_WIDTH} />
-			<Dino gameSpeed={gameSpeed} /> */}
-			<Trees />
+			<Wrapper componentBuilder={cloudsBuilder} total={3} width={HALF_VIEW_PORT_WIDTH} />
+			{/* <Dino gameSpeed={gameSpeed} /> */}
+			<Wrapper componentBuilder={treesBuilder} total={2} width={HALF_VIEW_PORT_WIDTH} />
 			<Ground gameSpeed={gameSpeed} />
 		</Stage>
 	);
