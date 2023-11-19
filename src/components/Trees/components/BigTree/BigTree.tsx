@@ -1,8 +1,9 @@
-import { FC, useMemo } from 'react';
-import { Sprite } from '@pixi/react';
+import { FC, useMemo, useContext, useRef } from 'react';
+import { Sprite, useTick } from '@pixi/react';
 import { Texture, Rectangle, BaseTexture } from 'pixi.js';
 import SpriteImage from '@/assets/sprite.png';
 import { TREE_TYPE, BIG_TREE_WIDTH } from '@/global/enums';
+import { AppContext } from '@/global/context';
 
 interface BigTreeProps {
 	x: number;
@@ -38,5 +39,15 @@ export const BigTree: FC<BigTreeProps> = ({ x, y, treeType }) => {
 		return new Texture(baseTexture, cropRect);
 	}, [cropRect]);
 
-	return <Sprite texture={croppedTexture} x={x} y={y} />;
+	const treeRef = useRef(null);
+
+	const appContext = useContext(AppContext);
+
+	useTick(() => {
+		if (treeRef.current && appContext) {
+			appContext.detectCollision(treeRef.current);
+		}
+	});
+
+	return <Sprite texture={croppedTexture} x={x} y={y} ref={treeRef} />;
 };

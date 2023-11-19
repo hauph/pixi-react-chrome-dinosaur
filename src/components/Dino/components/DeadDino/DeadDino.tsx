@@ -3,13 +3,13 @@ import { Sprite, Container } from '@pixi/react';
 import { Texture, Rectangle, BaseTexture } from 'pixi.js';
 import SpriteImage from '@/assets/sprite.png';
 
-interface DefaultDinoProps {
+interface DeadDinoProps {
 	visible: boolean;
 }
 
-export const DefaultDino: FC<DefaultDinoProps> = ({ visible }) => {
+export const DeadDino: FC<DeadDinoProps> = ({ visible }) => {
 	const baseTexture = new BaseTexture(SpriteImage);
-	const cropRect = new Rectangle(1335, 0, 88, 94);
+	const cropRect = new Rectangle(1775, 0, 89, 94);
 	const croppedTexture = new Texture(baseTexture, cropRect);
 
 	return (

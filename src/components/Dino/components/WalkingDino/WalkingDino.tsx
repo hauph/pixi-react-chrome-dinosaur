@@ -31,7 +31,7 @@ export const WalkingDino: FC<WalkingDinoProps> = ({ visible, gameSpeed }) => {
 	}
 
 	return (
-		<Container visible={visible} position={[50, 230]}>
+		<Container visible={visible}>
 			<AnimatedSprite animationSpeed={animationSpeed} isPlaying={true} textures={frames} />
 		</Container>
 	);

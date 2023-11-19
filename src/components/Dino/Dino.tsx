@@ -1,9 +1,12 @@
-import { FC, useEffect, useState, useRef } from 'react';
+import { FC, useEffect, useState, useRef, useContext } from 'react';
 import { Container, useTick } from '@pixi/react';
-import { WalkingDino, DefaultDino } from './components';
+import { WalkingDino, DefaultDino, DeadDino } from './components';
+import { PixiObject } from '@/global/interfaces';
+import { AppContext } from '@/global/context';
 
 interface DinoProps {
 	gameSpeed: number;
+	setRef: (ref: PixiObject) => void;
 }
 
 enum JUMP_STAGE {
@@ -12,11 +15,23 @@ enum JUMP_STAGE {
 	END = 2,
 }
 
-export const Dino: FC<DinoProps> = ({ gameSpeed }) => {
+let jumpProgress = 0;
+
+export const Dino: FC<DinoProps> = ({ gameSpeed, setRef }) => {
 	const [jump, setJump] = useState<number>(JUMP_STAGE.DEFAULT);
 	const [dinoYPos, setDinoYPos] = useState(230);
 
 	const jumpRef = useRef<number>(jump);
+	const containerRef = useRef<PixiObject>(null);
+
+	const appContext = useContext(AppContext);
+	const isGameOver = appContext?.gameOver || false;
+
+	useEffect(() => {
+		if (containerRef.current) {
+			setRef(containerRef.current);
+		}
+	}, [containerRef]);
 
 	useEffect(() => {
 		jumpRef.current = jump;
@@ -40,19 +55,23 @@ export const Dino: FC<DinoProps> = ({ gameSpeed }) => {
 					setJump(JUMP_STAGE.END);
 				}
 			} else if (jump === JUMP_STAGE.END) {
-				const newYPos = dinoYPos + 10;
+				jumpProgress += 0.3;
+				const newYPos = dinoYPos + jumpProgress;
 				setDinoYPos(newYPos);
-				if (newYPos >= 230) {
+				if (newYPos >= 240) {
+					setDinoYPos(230);
 					setJump(JUMP_STAGE.DEFAULT);
+					jumpProgress = 0;
 				}
 			}
 		}
 	});
 
 	return (
-		<Container>
-			<DefaultDino visible={gameSpeed === 0 || jump !== JUMP_STAGE.DEFAULT} yPos={dinoYPos} />
+		<Container ref={containerRef} position={[50, dinoYPos]} zIndex={2}>
+			<DefaultDino visible={gameSpeed === 0 || jump !== JUMP_STAGE.DEFAULT || !!isGameOver} />
 			<WalkingDino visible={gameSpeed > 0 && jump === JUMP_STAGE.DEFAULT} gameSpeed={gameSpeed} />
+			<DeadDino visible={isGameOver === true} />
 		</Container>
 	);
 };

@@ -1,6 +1,6 @@
-import { FC, useState, useMemo, useEffect, useCallback } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import { BigTree, SmallTree } from './components';
-import { Container, useTick, Graphics, Text } from '@pixi/react';
+import { Container, useTick } from '@pixi/react';
 import { TREE_STATUS, TREE_TYPE, SMALL_TREE_WIDTH, BIG_TREE_WIDTH } from '@/global/enums';
 import { ComponentBuilderProps } from '@/global/interfaces';
 import { random, getGameSpeedFromSessionStorage, createXY } from '@/global/utils';

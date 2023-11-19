@@ -6,18 +6,21 @@ interface WrapperProps {
 	componentBuilder: (args: ComponentBuilderProps) => JSX.Element;
 	total: number;
 	width: number;
+	skipFirstElement?: boolean;
 }
 
-export const Wrapper: FC<WrapperProps> = ({ componentBuilder, total, width }) => {
+export const Wrapper: FC<WrapperProps> = ({ componentBuilder, total, width, skipFirstElement }) => {
 	const [shouldUpdate, setUpdate] = useState(false);
 	const [elements, setElements] = useState<JSX.Element[]>([]);
 
 	useEffect(() => {
 		setElements(
 			Array.from({ length: total }, (_, i) => {
+				let index = skipFirstElement ? i + 1 : i;
+
 				return componentBuilder({
 					key: uuidv1(),
-					xPos: width * i,
+					xPos: width * index,
 					update: () => setUpdate(true),
 				});
 			})
