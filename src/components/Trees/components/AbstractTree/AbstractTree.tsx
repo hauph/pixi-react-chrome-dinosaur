@@ -2,38 +2,25 @@ import { FC, useMemo, useContext, useRef } from 'react';
 import { Sprite, useTick } from '@pixi/react';
 import { Texture, Rectangle, BaseTexture } from 'pixi.js';
 import SpriteImage from '@/assets/sprite.png';
-import { TREE_TYPE, BIG_TREE_WIDTH } from '@/global/enums';
+import { TREE_TYPE, BIG_TREE_WIDTH, TREE_STATUS } from '@/global/enums';
 import { AppContext } from '@/global/context';
+import { rectBuilder } from './rectBuilder';
 
 interface BigTreeProps {
 	x: number;
 	y: number;
 	treeType: number;
+	isSmallTree: TREE_STATUS;
 }
 
 const baseTexture = new BaseTexture(SpriteImage);
 
-export const BigTree: FC<BigTreeProps> = ({ x, y, treeType }) => {
+export const AbstractTree: FC<BigTreeProps> = ({ x, y, treeType, isSmallTree }) => {
 	const cropRect = useMemo(() => {
-		let rectX = 650;
-		let rectY = 0;
-		let rectW = BIG_TREE_WIDTH.WIDTH_50;
-		let rectH = 100;
+		const rect = rectBuilder(treeType, isSmallTree);
 
-		if (treeType === TREE_TYPE.TYPE_1) {
-			rectX = 750;
-			rectY = 0;
-			rectW = BIG_TREE_WIDTH.WIDTH_50;
-			rectH = 100;
-		} else if (treeType === TREE_TYPE.TYPE_2) {
-			rectX = 847;
-			rectY = 0;
-			rectW = BIG_TREE_WIDTH.WIDTH_104;
-			rectH = 100;
-		}
-
-		return new Rectangle(rectX, rectY, rectW, rectH);
-	}, [treeType]);
+		return new Rectangle(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
+	}, [treeType, isSmallTree]);
 
 	const croppedTexture = useMemo(() => {
 		return new Texture(baseTexture, cropRect);

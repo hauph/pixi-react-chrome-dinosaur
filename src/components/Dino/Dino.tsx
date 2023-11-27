@@ -49,13 +49,13 @@ export const Dino: FC<DinoProps> = ({ gameSpeed, setRef }) => {
 	useTick(() => {
 		if (gameSpeed > 0) {
 			if (jump === JUMP_STAGE.START) {
-				const newYPos = dinoYPos - 10;
+				const newYPos = dinoYPos - 15;
 				setDinoYPos(newYPos);
-				if (newYPos <= 0) {
+				if (newYPos <= 10) {
 					setJump(JUMP_STAGE.END);
 				}
 			} else if (jump === JUMP_STAGE.END) {
-				jumpProgress += 0.3;
+				jumpProgress += 0.6;
 				const newYPos = dinoYPos + jumpProgress;
 				setDinoYPos(newYPos);
 				if (newYPos >= 240) {

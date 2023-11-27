@@ -22,5 +22,5 @@ export enum BIG_TREE_WIDTH {
 
 export enum GAME_SPEED {
     DEFAULT = 0,
-    START = 3
+    START = 6
 }

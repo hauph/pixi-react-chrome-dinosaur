@@ -1,5 +1,5 @@
 import { FC, useState, useMemo, useEffect } from 'react';
-import { BigTree, SmallTree } from './components';
+import { AbstractTree } from './components';
 import { Container, useTick } from '@pixi/react';
 import { TREE_STATUS, TREE_TYPE, SMALL_TREE_WIDTH, BIG_TREE_WIDTH } from '@/global/enums';
 import { ComponentBuilderProps } from '@/global/interfaces';
@@ -58,10 +58,14 @@ export const Trees: FC<TreesProps> = ({ xPos, update }) => {
 				setMemory(sortedMemoArrayX);
 			}
 
-			return isSmallTree === TREE_STATUS.SMALL ? (
-				<SmallTree key={i} x={x} y={250} treeType={treeType} />
-			) : (
-				<BigTree key={i} x={x} y={225} treeType={treeType} />
+			return (
+				<AbstractTree
+					key={i}
+					x={x}
+					y={isSmallTree === TREE_STATUS.SMALL ? 250 : 225}
+					treeType={treeType}
+					isSmallTree={isSmallTree}
+				/>
 			);
 		});
 
