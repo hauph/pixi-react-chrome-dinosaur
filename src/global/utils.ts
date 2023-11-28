@@ -30,3 +30,16 @@ export function getGameSpeedFromSessionStorage() {
 export function removeGameSpeedFromSessionStorage() {
     sessionStorage.removeItem('gameSpeed');
 }
+
+export function setGameHighScoreToLocalStorage(score: number) {
+    localStorage.setItem('gameHighScore', score.toString());
+}
+
+export function getGameHighScoreToLocalStorage() {
+    const highScore = localStorage.getItem('gameHighScore');
+    return highScore === null ? 0 : parseInt(highScore);
+}
+
+export function removeGameHighScoreToLocalStorage() {
+    sessionStorage.removeItem('gameHighScore');
+}

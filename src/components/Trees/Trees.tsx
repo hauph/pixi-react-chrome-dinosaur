@@ -73,7 +73,7 @@ export const Trees: FC<TreesProps> = ({ xPos, update }) => {
 	}, []);
 
 	useTick(() => {
-		setXContainer(xContainer - gSpeed);
+		setXContainer(xContainer - gSpeed * 2);
 	}, gSpeed > 0);
 
 	useEffect(() => {

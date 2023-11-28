@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, FC } from 'react';
-import { Stage, Container } from '@pixi/react';
+import { Stage, Container, Text } from '@pixi/react';
 import { Ground, Clouds, Wrapper, Dino, Trees } from '@/components';
 import { VIEW_PORT_WIDTH, HALF_VIEW_PORT_WIDTH } from '@/global/constants';
 import { ComponentBuilderProps, PixiObject } from '@/global/interfaces';
@@ -8,6 +8,8 @@ import {
 	setGameSpeedToSessionStorage,
 	getGameSpeedFromSessionStorage,
 	removeGameSpeedFromSessionStorage,
+	setGameHighScoreToLocalStorage,
+	getGameHighScoreToLocalStorage,
 } from '@/global/utils';
 import { GAME_SPEED } from '@/global/enums';
 
@@ -19,6 +21,8 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	const [gameSpeed, setGameSpeed] = useState(0);
 	const [dinoRef, setDinoRef] = useState<PixiObject | null>(null);
 	const [gameOver, setGameOver] = useState(false);
+	const [score, setScore] = useState(0);
+	const [highScore] = useState(getGameHighScoreToLocalStorage());
 
 	const cloudsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
 		return <Clouds key={key} xPos={xPos} update={update} />;
@@ -35,8 +39,8 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 				const bounds2 = dinoRef.getBounds();
 
 				if (
-					bounds1.x < bounds2.x + bounds2.width - 30 &&
-					bounds1.x + bounds1.width - 30 > bounds2.x &&
+					bounds1.x < bounds2.x + bounds2.width &&
+					bounds1.x + bounds1.width > bounds2.x &&
 					bounds1.y < bounds2.y + bounds2.height - 30 &&
 					bounds1.y + bounds1.height - 30 > bounds2.y
 				) {
@@ -63,6 +67,9 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 					setGameSpeed(GAME_SPEED.START);
 					setGameSpeedToSessionStorage(GAME_SPEED.START);
 				} else if (gameOver) {
+					if (score > highScore) {
+						setGameHighScoreToLocalStorage(score);
+					}
 					restartGame();
 				}
 			},
@@ -86,6 +93,21 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	// 	};
 	// }, [gameSpeed, gameOver]);
 
+	useEffect(() => {
+		let intervalID: number;
+
+		if (gameSpeed > GAME_SPEED.DEFAULT && !gameOver) {
+			intervalID = setInterval(() => {
+				const newScore = score + 1;
+				setScore(newScore);
+			}, 100);
+		}
+
+		return () => {
+			clearInterval(intervalID);
+		};
+	}, [gameSpeed, gameOver, score, highScore]);
+
 	return (
 		<Stage width={VIEW_PORT_WIDTH} height={400} options={{ antialias: true, background: '#ffffff' }}>
 			<Container sortableChildren={true}>
@@ -105,6 +127,10 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 					/>
 					<Ground gameSpeed={gameSpeed} />
 				</AppContext.Provider>
+			</Container>
+			<Container>
+				<Text text={`Score: ${score}`} x={VIEW_PORT_WIDTH / 4} y={370} />
+				<Text text={`Highest Score: ${highScore}`} x={VIEW_PORT_WIDTH / 2} y={370} />
 			</Container>
 		</Stage>
 	);
