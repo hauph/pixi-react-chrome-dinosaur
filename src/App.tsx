@@ -10,7 +10,7 @@ function App() {
 		}
 	}, [shouldRestart]);
 
-	return !shouldRestart && <Game restartGame={() => setShouldRestart(true)} />;
+	return !shouldRestart ? <Game restartGame={() => setShouldRestart(true)} /> : null;
 }
 
 export default App;

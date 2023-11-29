@@ -23,7 +23,9 @@ export const WalkingDino: FC<WalkingDinoProps> = ({ visible, gameSpeed }) => {
 	}, []);
 
 	useEffect(() => {
-		setAnimationSpeed(animationSpeed + 0.1);
+		if (gameSpeed % 2 === 0) {
+			setAnimationSpeed(animationSpeed + 0.1);
+		}
 	}, [gameSpeed]);
 
 	if (frames.length === 0) {

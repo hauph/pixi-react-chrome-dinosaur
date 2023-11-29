@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, FC } from 'react';
 import { Stage, Container, Text } from '@pixi/react';
-import { Ground, Clouds, Wrapper, Dino, Trees } from '@/components';
+import { Ground, Clouds, Wrapper, Dino, Trees, GameOver, BtnRestart } from '@/components';
 import { VIEW_PORT_WIDTH, HALF_VIEW_PORT_WIDTH } from '@/global/constants';
 import { ComponentBuilderProps, PixiObject } from '@/global/interfaces';
 import { AppContext } from '@/global/context';
@@ -53,45 +53,43 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 		[dinoRef]
 	);
 
+	const handleKeyDown = (e: KeyboardEvent) => {
+		const keyCode = e.code;
+		if ((keyCode === 'Space' || keyCode === 'ArrowUp') && !gameOver) {
+			setGameSpeed(GAME_SPEED.START);
+			setGameSpeedToSessionStorage(GAME_SPEED.START);
+		} else if (gameOver) {
+			restartGame();
+		}
+	};
+
+	const handleResetBtn = () => {
+		document.removeEventListener('keydown', handleKeyDown);
+		restartGame();
+	};
+
 	useEffect(() => {
 		const gameSpeed = getGameSpeedFromSessionStorage();
 		if (gameSpeed > GAME_SPEED.DEFAULT) {
 			removeGameSpeedFromSessionStorage();
 		}
 
-		document.addEventListener(
-			'keydown',
-			(e: KeyboardEvent) => {
-				const keyCode = e.code;
-				if ((keyCode === 'Space' || keyCode === 'ArrowUp') && !gameOver) {
-					setGameSpeed(GAME_SPEED.START);
-					setGameSpeedToSessionStorage(GAME_SPEED.START);
-				} else if (gameOver) {
-					if (score > highScore) {
-						setGameHighScoreToLocalStorage(score);
-					}
-					restartGame();
-				}
-			},
-			{ once: true }
-		);
+		document.addEventListener('keydown', handleKeyDown, { once: true });
+
+		if (gameOver) {
+			if (score > highScore) {
+				setGameHighScoreToLocalStorage(score);
+			}
+		}
 	}, [gameOver]);
 
 	// useEffect(() => {
-	// 	let intervalID: number;
-
-	// 	if (gameSpeed > GAME_SPEED.DEFAULT && !gameOver) {
-	// 		intervalID = setInterval(() => {
-	// 			const newGameSpeed = gameSpeed + GAME_SPEED.START;
-	// 			setGameSpeed(newGameSpeed);
-	// 			setGameSpeedToSessionStorage(newGameSpeed);
-	// 		}, 3000);
+	// 	if (score > 0 && score % 100 === 0) {
+	// 		const newGameSpeed = gameSpeed + 1;
+	// 		setGameSpeed(newGameSpeed);
+	// 		setGameSpeedToSessionStorage(newGameSpeed);
 	// 	}
-
-	// 	return () => {
-	// 		clearInterval(intervalID);
-	// 	};
-	// }, [gameSpeed, gameOver]);
+	// }, [score]);
 
 	useEffect(() => {
 		let intervalID: number;
@@ -106,7 +104,7 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 		return () => {
 			clearInterval(intervalID);
 		};
-	}, [gameSpeed, gameOver, score, highScore]);
+	}, [gameSpeed, gameOver, score]);
 
 	return (
 		<Stage width={VIEW_PORT_WIDTH} height={400} options={{ antialias: true, background: '#ffffff' }}>
@@ -129,8 +127,12 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 				</AppContext.Provider>
 			</Container>
 			<Container>
-				<Text text={`Score: ${score}`} x={VIEW_PORT_WIDTH / 4} y={370} />
-				<Text text={`Highest Score: ${highScore}`} x={VIEW_PORT_WIDTH / 2} y={370} />
+				<Text text={`Score: ${score}`} x={HALF_VIEW_PORT_WIDTH / 4} y={370} />
+				<Text text={`Highest Score: ${highScore}`} x={HALF_VIEW_PORT_WIDTH} y={370} />
+			</Container>
+			<Container visible={gameOver}>
+				<GameOver />
+				<BtnRestart restartGame={handleResetBtn} />
 			</Container>
 		</Stage>
 	);
