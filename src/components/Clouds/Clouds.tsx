@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, useTick } from '@pixi/react';
 import { Cloud } from './components';
 import { getGameSpeedFromSessionStorage, createXY } from '@/global/utils';
-import { HALF_VIEW_PORT_WIDTH, CLOUD_WIDTH, TOTAL_CLOUDS } from '@/global/constants';
+import { CLOUD_WIDTH, TOTAL_CLOUDS } from '@/global/constants';
 import { ComponentBuilderProps } from '@/global/interfaces';
+import { AppContext } from '@/global/context';
 
 type CloudsProps = Omit<ComponentBuilderProps, 'key'>;
 
@@ -12,6 +13,10 @@ export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 	const [clouds, setClouds] = useState<JSX.Element[]>([]);
 	const [memory, setMemory] = useState<number[]>([]);
 	const [gSpeed, setGSpeed] = useState(0);
+
+	const appContext = useContext(AppContext);
+	const cloudXPositions = appContext?.cloudXPositions || [];
+	const latestCloudXPos = cloudXPositions.length > 0 ? cloudXPositions[cloudXPositions.length - 1] : xPos;
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
@@ -29,14 +34,18 @@ export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 		const memoArrayY: number[] = [];
 
 		const newClouds = Array.from({ length: TOTAL_CLOUDS }, (_, i) => {
-			const x = createXY(memoArrayX, xPos, xPos + HALF_VIEW_PORT_WIDTH, CLOUD_WIDTH);
+			const x = createXY(memoArrayX, latestCloudXPos, latestCloudXPos + 100, CLOUD_WIDTH);
 			const y = createXY(memoArrayY, 0, 200, CLOUD_WIDTH) > 200 ? 200 : createXY(memoArrayY, 0, 200, CLOUD_WIDTH);
 
 			if (i === TOTAL_CLOUDS - 1) {
-				setMemory(memoArrayX.sort((a, b) => a - b));
+				const sortedMemoArrayX = memoArrayX.sort((a, b) => a - b);
+				if (appContext) {
+					appContext.updateCloudXPositions(sortedMemoArrayX);
+				}
+				setMemory(sortedMemoArrayX);
 			}
 
-			return <Cloud key={i} x={x} y={y} />;
+			return <Cloud key={x} x={x} y={y} />;
 		});
 
 		setClouds(newClouds.sort((a, b) => a.props.x - b.props.x));

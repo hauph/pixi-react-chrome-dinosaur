@@ -22,6 +22,8 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	const [dinoRef, setDinoRef] = useState<PixiObject | null>(null);
 	const [gameOver, setGameOver] = useState(false);
 	const [score, setScore] = useState(0);
+	const [cloudXPositions, setCloudPositions] = useState<number[]>([]);
+	const [treeXPositions, setTreePositions] = useState<number[]>([]);
 	const [highScore] = useState(getGameHighScoreToLocalStorage());
 
 	const cloudsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
@@ -30,6 +32,14 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 
 	const treesBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
 		return <Trees key={key} xPos={xPos} update={update} />;
+	};
+
+	const updateCloudXPositions = (xPos: number[]) => {
+		setCloudPositions(xPos);
+	};
+
+	const updateTreeXPositions = (xPos: number[]) => {
+		setTreePositions(xPos);
 	};
 
 	const detectCollision = useCallback(
@@ -83,13 +93,13 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 		}
 	}, [gameOver]);
 
-	// useEffect(() => {
-	// 	if (score > 0 && score % 100 === 0) {
-	// 		const newGameSpeed = gameSpeed + 1;
-	// 		setGameSpeed(newGameSpeed);
-	// 		setGameSpeedToSessionStorage(newGameSpeed);
-	// 	}
-	// }, [score]);
+	useEffect(() => {
+		if (score > 0 && score % 200 === 0) {
+			const newGameSpeed = gameSpeed + 1;
+			setGameSpeed(newGameSpeed);
+			setGameSpeedToSessionStorage(newGameSpeed);
+		}
+	}, [score]);
 
 	useEffect(() => {
 		let intervalID: number;
@@ -113,14 +123,18 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 					value={{
 						detectCollision,
 						gameOver,
+						cloudXPositions,
+						treeXPositions,
+						updateCloudXPositions,
+						updateTreeXPositions,
 					}}
 				>
 					<Wrapper componentBuilder={cloudsBuilder} total={3} width={HALF_VIEW_PORT_WIDTH} />
 					<Dino gameSpeed={gameSpeed} setRef={setDinoRef} />
 					<Wrapper
 						componentBuilder={treesBuilder}
-						total={2}
-						width={HALF_VIEW_PORT_WIDTH}
+						total={3}
+						width={HALF_VIEW_PORT_WIDTH / 2}
 						skipFirstElement={true}
 					/>
 					<Ground gameSpeed={gameSpeed} />

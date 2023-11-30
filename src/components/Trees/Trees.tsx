@@ -1,10 +1,11 @@
-import { FC, useState, useMemo, useEffect } from 'react';
+import { FC, useState, useMemo, useEffect, useContext } from 'react';
 import { AbstractTree } from './components';
 import { Container, useTick } from '@pixi/react';
 import { TREE_STATUS, TREE_TYPE, SMALL_TREE_WIDTH, BIG_TREE_WIDTH } from '@/global/enums';
 import { ComponentBuilderProps } from '@/global/interfaces';
 import { random, getGameSpeedFromSessionStorage, createXY } from '@/global/utils';
-import { TOTAL_TREES, HALF_VIEW_PORT_WIDTH } from '@/global/constants';
+import { TOTAL_TREES } from '@/global/constants';
+import { AppContext } from '@/global/context';
 
 type TreesProps = Omit<ComponentBuilderProps, 'key'>;
 
@@ -14,6 +15,10 @@ export const Trees: FC<TreesProps> = ({ xPos, update }) => {
 	const [trees, setTrees] = useState<JSX.Element[]>([]);
 	const [memory, setMemory] = useState<number[]>([]);
 	const [gSpeed, setGSpeed] = useState(0);
+
+	const appContext = useContext(AppContext);
+	const treeXPositions = appContext?.treeXPositions || [];
+	const latestTreeXPos = treeXPositions.length > 0 ? treeXPositions[treeXPositions.length - 1] : xPos;
 
 	const treeType = useMemo(() => {
 		if (isSmallTree === TREE_STATUS.SMALL) {
@@ -51,16 +56,19 @@ export const Trees: FC<TreesProps> = ({ xPos, update }) => {
 		const memoArrayX: number[] = [];
 
 		const newTrees = Array.from({ length: TOTAL_TREES }, (_, i) => {
-			const x = createXY(memoArrayX, xPos || 100, xPos + HALF_VIEW_PORT_WIDTH, treeWidth);
+			const x = createXY(memoArrayX, latestTreeXPos || 100, latestTreeXPos + 100, treeWidth);
 
 			if (i === TOTAL_TREES - 1) {
 				const sortedMemoArrayX = memoArrayX.sort((a, b) => a - b);
+				if (appContext) {
+					appContext.updateTreeXPositions(sortedMemoArrayX);
+				}
 				setMemory(sortedMemoArrayX);
 			}
 
 			return (
 				<AbstractTree
-					key={i}
+					key={x}
 					x={x}
 					y={isSmallTree === TREE_STATUS.SMALL ? 250 : 225}
 					treeType={treeType}

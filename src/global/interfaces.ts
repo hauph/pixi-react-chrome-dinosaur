@@ -9,6 +9,10 @@ export interface ComponentBuilderProps {
 export interface AppContextTypes {
     detectCollision: (ref: PixiObject) => void;
     gameOver: boolean;
+    cloudXPositions: number[];
+    updateCloudXPositions: (positions: number[]) => void;
+    treeXPositions: number[];
+    updateTreeXPositions: (positions: number[]) => void;
 }
 
 export type PixiObject = PixiContainer<PixiDisplayObject>
