@@ -13,6 +13,8 @@ export interface AppContextTypes {
     updateCloudXPositions: (positions: number[]) => void;
     treeXPositions: number[];
     updateTreeXPositions: (positions: number[]) => void;
+    birdXPositions: number[];
+    updateBirdXPositions: (positions: number[]) => void;
 }
 
 export type PixiObject = PixiContainer<PixiDisplayObject>

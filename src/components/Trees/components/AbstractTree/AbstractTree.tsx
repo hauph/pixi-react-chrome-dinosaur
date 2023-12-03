@@ -2,7 +2,7 @@ import { FC, useMemo, useContext, useRef } from 'react';
 import { Sprite, useTick } from '@pixi/react';
 import { Texture, Rectangle, BaseTexture } from 'pixi.js';
 import SpriteImage from '@/assets/sprite.png';
-import { TREE_TYPE, BIG_TREE_WIDTH, TREE_STATUS } from '@/global/enums';
+import { TREE_STATUS } from '@/global/enums';
 import { AppContext } from '@/global/context';
 import { rectBuilder } from './rectBuilder';
 

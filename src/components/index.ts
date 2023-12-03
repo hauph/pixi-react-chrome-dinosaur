@@ -6,3 +6,4 @@ export * from './Trees';
 export * from './Game';
 export * from './GameOver';
 export * from './BtnRestart';
+export * from './Birds';

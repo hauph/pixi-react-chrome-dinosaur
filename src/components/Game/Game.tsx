@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, FC } from 'react';
 import { Stage, Container, Text } from '@pixi/react';
-import { Ground, Clouds, Wrapper, Dino, Trees, GameOver, BtnRestart } from '@/components';
+import { Ground, Clouds, Wrapper, Dino, Trees, GameOver, BtnRestart, Birds } from '@/components';
 import { VIEW_PORT_WIDTH, HALF_VIEW_PORT_WIDTH } from '@/global/constants';
 import { ComponentBuilderProps, PixiObject } from '@/global/interfaces';
 import { AppContext } from '@/global/context';
@@ -22,8 +22,9 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	const [dinoRef, setDinoRef] = useState<PixiObject | null>(null);
 	const [gameOver, setGameOver] = useState(false);
 	const [score, setScore] = useState(0);
-	const [cloudXPositions, setCloudPositions] = useState<number[]>([]);
-	const [treeXPositions, setTreePositions] = useState<number[]>([]);
+	const [cloudXPositions, setCloudXPositions] = useState<number[]>([]);
+	const [treeXPositions, setTreeXPositions] = useState<number[]>([]);
+	const [birdXPositions, setBirdXPositions] = useState<number[]>([]);
 	const [highScore] = useState(getGameHighScoreToLocalStorage());
 
 	const cloudsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
@@ -33,13 +34,20 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	const treesBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
 		return <Trees key={key} xPos={xPos} update={update} />;
 	};
+	const birdsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
+		return <Birds key={key} xPos={xPos} update={update} />;
+	};
 
 	const updateCloudXPositions = (xPos: number[]) => {
-		setCloudPositions(xPos);
+		setCloudXPositions(xPos);
 	};
 
 	const updateTreeXPositions = (xPos: number[]) => {
-		setTreePositions(xPos);
+		setTreeXPositions(xPos);
+	};
+
+	const updateBirdXPositions = (xPos: number[]) => {
+		setBirdXPositions(xPos);
 	};
 
 	const detectCollision = useCallback(
@@ -65,11 +73,13 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 
 	const handleKeyDown = (e: KeyboardEvent) => {
 		const keyCode = e.code;
-		if ((keyCode === 'Space' || keyCode === 'ArrowUp') && !gameOver) {
-			setGameSpeed(GAME_SPEED.START);
-			setGameSpeedToSessionStorage(GAME_SPEED.START);
-		} else if (gameOver) {
-			restartGame();
+		if (keyCode === 'Space' || keyCode === 'ArrowUp') {
+			if (!gameOver) {
+				setGameSpeed(GAME_SPEED.START);
+				setGameSpeedToSessionStorage(GAME_SPEED.START);
+			} else {
+				handleResetBtn();
+			}
 		}
 	};
 
@@ -84,7 +94,7 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 			removeGameSpeedFromSessionStorage();
 		}
 
-		document.addEventListener('keydown', handleKeyDown, { once: true });
+		document.addEventListener('keydown', handleKeyDown);
 
 		if (gameOver) {
 			if (score > highScore) {
@@ -125,15 +135,25 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 						gameOver,
 						cloudXPositions,
 						treeXPositions,
+						birdXPositions,
 						updateCloudXPositions,
 						updateTreeXPositions,
+						updateBirdXPositions,
 					}}
 				>
+					{score >= 100 && (
+						<Wrapper
+							componentBuilder={birdsBuilder}
+							total={2}
+							width={HALF_VIEW_PORT_WIDTH}
+							skipFirstElement={true}
+						/>
+					)}
 					<Wrapper componentBuilder={cloudsBuilder} total={3} width={HALF_VIEW_PORT_WIDTH} />
 					<Dino gameSpeed={gameSpeed} setRef={setDinoRef} />
 					<Wrapper
 						componentBuilder={treesBuilder}
-						total={3}
+						total={2}
 						width={HALF_VIEW_PORT_WIDTH / 2}
 						skipFirstElement={true}
 					/>
