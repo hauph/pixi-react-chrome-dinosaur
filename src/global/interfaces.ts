@@ -9,12 +9,19 @@ export interface ComponentBuilderProps {
 export interface AppContextTypes {
     detectCollision: (ref: PixiObject) => void;
     gameOver: boolean;
-    cloudXPositions: number[];
-    updateCloudXPositions: (positions: number[]) => void;
-    treeXPositions: number[];
-    updateTreeXPositions: (positions: number[]) => void;
-    birdXPositions: number[];
-    updateBirdXPositions: (positions: number[]) => void;
+    store: State;
+    dispatch: (action: Action) => void;
 }
 
 export type PixiObject = PixiContainer<PixiDisplayObject>
+
+export interface State {
+    cloudXPositions: number[];
+    treeXPositions: number[];
+    birdXPositions: number[];
+}
+
+export interface Action {
+    type: string;
+    payload: number[];
+}

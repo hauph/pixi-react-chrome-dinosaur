@@ -12,6 +12,7 @@ import {
 	getGameHighScoreToLocalStorage,
 } from '@/global/utils';
 import { GAME_SPEED } from '@/global/enums';
+import { useStore } from '@/hooks';
 
 interface GameProps {
 	restartGame: () => void;
@@ -22,10 +23,10 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	const [dinoRef, setDinoRef] = useState<PixiObject | null>(null);
 	const [gameOver, setGameOver] = useState(false);
 	const [score, setScore] = useState(0);
-	const [cloudXPositions, setCloudXPositions] = useState<number[]>([]);
-	const [treeXPositions, setTreeXPositions] = useState<number[]>([]);
-	const [birdXPositions, setBirdXPositions] = useState<number[]>([]);
 	const [highScore] = useState(getGameHighScoreToLocalStorage());
+
+	const appStore = useStore();
+	const { state: store, dispatch } = appStore;
 
 	const cloudsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
 		return <Clouds key={key} xPos={xPos} update={update} />;
@@ -36,18 +37,6 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 	};
 	const birdsBuilder = ({ key, xPos, update }: ComponentBuilderProps): JSX.Element => {
 		return <Birds key={key} xPos={xPos} update={update} />;
-	};
-
-	const updateCloudXPositions = (xPos: number[]) => {
-		setCloudXPositions(xPos);
-	};
-
-	const updateTreeXPositions = (xPos: number[]) => {
-		setTreeXPositions(xPos);
-	};
-
-	const updateBirdXPositions = (xPos: number[]) => {
-		setBirdXPositions(xPos);
 	};
 
 	const detectCollision = useCallback(
@@ -133,12 +122,8 @@ export const Game: FC<GameProps> = ({ restartGame }) => {
 					value={{
 						detectCollision,
 						gameOver,
-						cloudXPositions,
-						treeXPositions,
-						birdXPositions,
-						updateCloudXPositions,
-						updateTreeXPositions,
-						updateBirdXPositions,
+						store,
+						dispatch,
 					}}
 				>
 					{score >= 100 && (

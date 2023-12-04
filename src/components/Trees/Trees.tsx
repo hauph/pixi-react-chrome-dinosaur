@@ -17,7 +17,7 @@ export const Trees: FC<TreesProps> = ({ xPos, update }) => {
 	const [gSpeed, setGSpeed] = useState(0);
 
 	const appContext = useContext(AppContext);
-	const treeXPositions = appContext?.treeXPositions || [];
+	const treeXPositions = appContext?.store.treeXPositions || [];
 	const latestTreeXPos = treeXPositions.length > 0 ? treeXPositions[treeXPositions.length - 1] : xPos;
 
 	const treeType = useMemo(() => {
@@ -61,7 +61,7 @@ export const Trees: FC<TreesProps> = ({ xPos, update }) => {
 			if (i === TOTAL_TREES - 1) {
 				const sortedMemoArrayX = memoArrayX.sort((a, b) => a - b);
 				if (appContext) {
-					appContext.updateTreeXPositions(sortedMemoArrayX);
+					appContext.dispatch({ type: 'UPDATE_TREE_X_POSITIONS', payload: sortedMemoArrayX });
 				}
 				setMemory(sortedMemoArrayX);
 			}

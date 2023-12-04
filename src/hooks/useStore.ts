@@ -1,31 +1,39 @@
-import { useState } from 'react';
+import { useReducer } from "react";
+import { State, Action } from '../global/interfaces';
+
+const reducer = (state: State, action: Action) => {
+    switch (action.type) {
+        case 'UPDATE_CLOUD_X_POSITIONS':
+            return {
+                ...state,
+                cloudXPositions: action.payload
+            }
+        case 'UPDATE_TREE_X_POSITIONS':
+            return {
+                ...state,
+                treeXPositions: action.payload
+            }
+        case 'UPDATE_BIRD_X_POSITIONS':
+            return {
+                ...state,
+                birdXPositions: action.payload
+            }
+        default:
+            return state;
+    }
+}
+
+const initialState = {
+    cloudXPositions: [],
+    treeXPositions: [],
+    birdXPositions: []
+}
 
 export const useStore = () => {
-    const [gameOver, setGameOver] = useState(false);
-    const [cloudXPositions, setCloudXPositions] = useState<number[]>([]);
-    const [treeXPositions, setTreeXPositions] = useState<number[]>([]);
-    const [birdXPositions, setBirdXPositions] = useState<number[]>([]);
-
-    const updateCloudXPositions = (xPos: number[]) => {
-        setCloudXPositions(xPos);
-    };
-
-    const updateTreeXPositions = (xPos: number[]) => {
-        setTreeXPositions(xPos);
-    };
-
-    const updateBirdXPositions = (xPos: number[]) => {
-        setBirdXPositions(xPos);
-    };
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     return {
-        gameOver,
-        setGameOver,
-        cloudXPositions,
-        updateCloudXPositions,
-        treeXPositions,
-        updateTreeXPositions,
-        birdXPositions,
-        updateBirdXPositions
+        state,
+        dispatch
     }
 }

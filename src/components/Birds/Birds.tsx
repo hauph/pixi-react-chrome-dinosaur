@@ -17,7 +17,7 @@ export const Birds: React.FC<BirdsProps> = ({ xPos, update }) => {
 	const [gSpeed, setGSpeed] = useState(0);
 
 	const appContext = useContext(AppContext);
-	const birdXPositions = appContext?.birdXPositions || [];
+	const birdXPositions = appContext?.store.birdXPositions || [];
 	const latestBirdXPos = birdXPositions.length > 0 ? birdXPositions[birdXPositions.length - 1] : xPos;
 
 	useEffect(() => {
@@ -45,7 +45,7 @@ export const Birds: React.FC<BirdsProps> = ({ xPos, update }) => {
 			if (i === TOTAL_BIRDS - 1) {
 				const sortedMemoArrayX = memoArrayX.sort((a, b) => a - b);
 				if (appContext) {
-					appContext.updateBirdXPositions(sortedMemoArrayX);
+					appContext.dispatch({ type: 'UPDATE_BIRD_X_POSITIONS', payload: sortedMemoArrayX });
 				}
 				setMemory(sortedMemoArrayX);
 			}

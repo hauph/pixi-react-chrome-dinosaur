@@ -17,7 +17,7 @@ export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 	const [gSpeed, setGSpeed] = useState(0);
 
 	const appContext = useContext(AppContext);
-	const cloudXPositions = appContext?.cloudXPositions || [];
+	const cloudXPositions = appContext?.store.cloudXPositions || [];
 	const latestCloudXPos = cloudXPositions.length > 0 ? cloudXPositions[cloudXPositions.length - 1] : xPos;
 
 	useEffect(() => {
@@ -45,7 +45,7 @@ export const Clouds: React.FC<CloudsProps> = ({ xPos, update }) => {
 			if (i === TOTAL_CLOUDS - 1) {
 				const sortedMemoArrayX = memoArrayX.sort((a, b) => a - b);
 				if (appContext) {
-					appContext.updateCloudXPositions(sortedMemoArrayX);
+					appContext.dispatch({ type: 'UPDATE_CLOUD_X_POSITIONS', payload: sortedMemoArrayX });
 				}
 				setMemory(sortedMemoArrayX);
 			}
