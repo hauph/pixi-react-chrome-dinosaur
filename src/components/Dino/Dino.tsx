@@ -81,7 +81,7 @@ export const Dino: FC<DinoProps> = ({ gameSpeed, setRef }) => {
 	useEffect(() => {
 		if (jump == JUMP_STAGE.DEFAULT) {
 			if (isDinoRunning) {
-				setDinoYPos(270);
+				setDinoYPos(265);
 			} else {
 				setDinoYPos(230);
 			}
